@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZenMix by Medit8 | Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module">
+      import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+      
+      // Initialize Supabase client
+      const supabaseUrl = 'https://avrtzsptvuknahqkzqie.supabase.co'
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cnR6c3B0dnVrbmFocWt6cWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA4NDg0NzYsImV4cCI6MjA1NjQyNDQ3Nn0.K6XCgkIqbPn1txPaPdPU6U4OkQ7j0u63RXTNJYNLD-0'
+      const supabase = createClient(supabaseUrl, supabaseKey)
+
+      // Handle form submission
+      window.handleSubmit = async (event) => {
+        event.preventDefault()
+        
+        const email = document.getElementById('email').value
+        const password = document.getElementById('password').value
+        const errorDiv = document.getElementById('error-message')
+        const submitButton = document.getElementById('submit-button')
+        
+        try {
+          submitButton.disabled = true
+          submitButton.textContent = 'Signing in...'
+          errorDiv.style.display = 'none'
+          
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          })
+          
+          if (error) throw error
+          
+          if (data?.user) {
+            window.location.href = '/dashboard.html'
+          }
+        } catch (error) {
+          console.error('Auth error:', error)
+          errorDiv.textContent = error.message || 'Authentication failed'
+          errorDiv.style.display = 'block'
+        } finally {
+          submitButton.disabled = false
+          submitButton.textContent = 'Sign In'
+        }
+      }
+
+      // Handle signup link click
+      window.handleSignupClick = () => {
+        window.location.href = '/auth.html?signup=true'
+      }
+    </script>
+    <style>
+      :root {
+        --primary: #646cff;
+        --primary-dark: #535bf2;
+        --card-bg: rgba(30, 30, 30, 0.5);
+        --dark-bg: rgba(20, 20, 20, 0.5);
+      }
+      
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #000;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+      
+      .gradient-text {
+        background: linear-gradient(to right, #646cff, #9089fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      .gradient-button {
+        background: linear-gradient(to right, #646cff, #9089fc);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 9999px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      
+      .gradient-button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+      
+      .gradient-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+      
+      .bg-card {
+        background-color: var(--card-bg);
+        border-radius: 0.75rem;
+      }
+      
+      .bg-dark {
+        background-color: var(--dark-bg);
+      }
+      
+      .rounded-xl {
+        border-radius: 0.75rem;
+      }
+      
+      .shadow-lg {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      
+      .text-center {
+        text-align: center;
+      }
+      
+      .max-w-md {
+        max-width: 28rem;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .py-8 {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+      
+      .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      
+      .p-8 {
+        padding: 2rem;
+      }
+      
+      .mb-6 {
+        margin-bottom: 1.5rem;
+      }
+      
+      .mb-4 {
+        margin-bottom: 1rem;
+      }
+      
+      .mb-1 {
+        margin-bottom: 0.25rem;
+      }
+      
+      .mt-2 {
+        margin-top: 0.5rem;
+      }
+      
+      .mt-8 {
+        margin-top: 2rem;
+      }
+      
+      .mx-auto {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .h-16 {
+        height: 4rem;
+      }
+      
+      .w-16 {
+        width: 4rem;
+      }
+      
+      .text-2xl {
+        font-size: 1.5rem;
+      }
+      
+      .text-sm {
+        font-size: 0.875rem;
+      }
+      
+      .font-bold {
+        font-weight: 700;
+      }
+      
+      .font-medium {
+        font-weight: 500;
+      }
+      
+      .text-gray-400 {
+        color: #9ca3af;
+      }
+      
+      .text-gray-300 {
+        color: #d1d5db;
+      }
+      
+      .text-red-200 {
+        color: #fecaca;
+      }
+      
+      .text-primary {
+        color: var(--primary);
+      }
+      
+      .bg-red-900\/20 {
+        background-color: rgba(127, 29, 29, 0.2);
+      }
+      
+      .border {
+        border-width: 1px;
+        border-style: solid;
+      }
+      
+      .border-red-900 {
+        border-color: #7f1d1d;
+      }
+      
+      .border-gray-700 {
+        border-color: #374151;
+      }
+      
+      .rounded-lg {
+        border-radius: 0.5rem;
+      }
+      
+      .w-full {
+        width: 100%;
+      }
+      
+      .py-3 {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+      }
+      
+      .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      
+      .py-2 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+      
+      .block {
+        display: block;
+      }
+      
+      .focus\:outline-none:focus {
+        outline: none;
+      }
+      
+      .focus\:ring-2:focus {
+        box-shadow: 0 0 0 2px var(--primary);
+      }
+      
+      .focus\:ring-primary:focus {
+        box-shadow: 0 0 0 2px var(--primary);
+      }
+      
+      .hover\:text-primary-dark:hover {
+        color: var(--primary-dark);
+      }
+      
+      .hover\:text-white:hover {
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="bg-black text-white">
+    <div class="container px-4 py-8">
+      <div class="max-w-md mx-auto">
+        <div class="bg-card rounded-xl p-8 shadow-lg">
+          <div class="text-center mb-6">
+            <img src="/logo.svg" alt="ZenMix Logo" class="h-16 w-16 mx-auto mb-4" />
+            <h1 class="text-2xl font-bold gradient-text">
+              Sign In to ZenMix
+            </h1>
+            <p class="text-gray-400 mt-2">
+              Access your personalized meditation experience
+            </p>
+          </div>
+          
+          <div id="error-message" class="bg-red-900/20 border border-red-900 text-red-200 px-4 py-3 rounded-lg mb-6" style="display: none;">
+          </div>
+          
+          <form onsubmit="handleSubmit(event)">
+            <div class="mb-4">
+              <label for="email" class="block text-sm font-medium text-gray-300 mb-1">
+                Email
+              </label>
+              <input 
+                type="email" 
+                id="email" 
+                class="w-full px-4 py-2 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="your@email.com"
+                required
+              />
+            </div>
+            
+            <div class="mb-4">
+              <label for="password" class="block text-sm font-medium text-gray-300 mb-1">
+                Password
+              </label>
+              <input 
+                type="password" 
+                id="password" 
+                class="w-full px-4 py-2 bg-dark border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Your password"
+                required
+              />
+            </div>
+            
+            <button 
+              type="submit" 
+              id="submit-button"
+              class="w-full gradient-button py-3 mb-4"
+            >
+              Sign In
+            </button>
+            
+            <div class="text-center">
+              <button 
+                type="button"
+                onclick="handleSignupClick()"
+                class="text-primary hover:text-primary-dark text-sm"
+              >
+                Don't have an account? Sign Up
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="mt-8 text-center">
+          <a 
+            href="/"
+            class="text-gray-400 hover:text-white text-sm"
+          >
+            ← Back to Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

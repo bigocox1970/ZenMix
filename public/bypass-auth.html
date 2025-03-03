@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZenMix by Medit8 | Dashboard (No Auth)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #646cff;
+      --primary-dark: #535bf2;
+      --card-bg: rgba(30, 30, 30, 0.5);
+      --dark-bg: rgba(20, 20, 20, 0.5);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #000;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(to right, #646cff, #9089fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .gradient-button {
+      background: linear-gradient(to right, #646cff, #9089fc);
+      color: white;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .gradient-button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    
+    .bg-card {
+      background-color: var(--card-bg);
+      border-radius: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .bg-dark {
+      background-color: var(--dark-bg);
+    }
+    
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 250px;
+      background-color: rgba(20, 20, 20, 0.8);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 80px;
+      z-index: 40;
+    }
+    
+    .main-content {
+      margin-left: 250px;
+      padding-top: 80px;
+      min-height: 100vh;
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 24px;
+      color: #9ca3af;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .nav-item:hover, .nav-item.active {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+    
+    .nav-item svg {
+      margin-right: 12px;
+    }
+    
+    .card {
+      background-color: rgba(30, 30, 30, 0.5);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .sound-card {
+      background-color: rgba(20, 20, 20, 0.5);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .volume-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #4b5563;
+      outline: none;
+      margin-top: 8px;
+    }
+    
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+    }
+    
+    .volume-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+    }
+    
+    .eq-slider {
+      -webkit-appearance: none;
+      width: 6px;
+      height: 100px;
+      border-radius: 3px;
+      background: #4b5563;
+      outline: none;
+      margin: 0 8px;
+    }
+    
+    .eq-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+    }
+    
+    .eq-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+    }
+    
+    .glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(100, 108, 255, 0.3) 0%, rgba(100, 108, 255, 0) 70%);
+      border-radius: 50%;
+      filter: blur(50px);
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen">
+    <header>
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <img src="/logo.svg" alt="ZenMix Logo" class="h-8 w-8" />
+          <span class="text-white font-semibold text-xl">ZenMix<span class="text-xs text-gray-400 ml-1">by Medit8</span></span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-gray-300">test@example.com</span>
+          <button
+            onclick="window.location.href = '/';"
+            class="bg-transparent hover:bg-primary/10 text-white px-4 py-1.5 rounded-full border border-primary transition-all duration-300"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex">
+      <div class="sidebar">
+        <a href="#" class="nav-item active">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+          </svg>
+          Audio Library
+        </a>
+        <a href="#" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+          Player
+        </a>
+        <a href="#" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1 0 10 10H12V2z"></path>
+            <path d="M12 2a10 10 0 0 1 10 10h-10V2z"></path>
+            <path d="M12 12l9.7-3.2"></path>
+            <path d="M12 12l3.2 9.7"></path>
+          </svg>
+          Analytics
+        </a>
+        <a href="#" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          Community
+        </a>
+        <a href="#" class="nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          Settings
+        </a>
+      </div>
+
+      <div class="main-content">
+        <div class="container mx-auto px-6 py-8">
+          <h1 class="text-3xl font-bold mb-6">Welcome to your Dashboard!</h1>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <!-- Recent Sessions -->
+            <div class="bg-card rounded-xl p-6">
+              <h2 class="text-xl font-semibold mb-4">Recent Sessions</h2>
+              <div class="space-y-4">
+                <div class="bg-dark/50 p-4 rounded-lg">
+                  <h3 class="font-medium">Morning Meditation</h3>
+                  <p class="text-gray-400 text-sm">10 minutes • Yesterday</p>
+                </div>
+                <div class="bg-dark/50 p-4 rounded-lg">
+                  <h3 class="font-medium">Focus Session</h3>
+                  <p class="text-gray-400 text-sm">25 minutes • 2 days ago</p>
+                </div>
+                <div class="bg-dark/50 p-4 rounded-lg">
+                  <h3 class="font-medium">Sleep Preparation</h3>
+                  <p class="text-gray-400 text-sm">15 minutes • 3 days ago</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="bg-card rounded-xl p-6">
+              <h2 class="text-xl font-semibold mb-4">Recommended for You</h2>
+              <div class="space-y-4">
+                <div class="bg-dark/50 p-4 rounded-lg">
+                  <h3 class="font-medium">Morning Calm</h3>
+                  <p class="text-gray-400 text-sm">Start your day with gentle sounds and guided breathing</p>
+                </div>
+                <div class="bg-dark/50 p-4 rounded-lg">
+                  <h3 class="font-medium">Deep Focus</h3>
+                  <p class="text-gray-400 text-sm">Ambient sounds designed to enhance concentration</p>
+                </div>
+                <div class="bg-dark/50 p-4 rounded-lg">
+                  <h3 class="font-medium">Evening Wind Down</h3>
+                  <p class="text-gray-400 text-sm">Prepare for sleep with calming tones</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card rounded-xl p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-6">Audio Mixer</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="sound-card">
+                <div>
+                  <h3 class="font-medium">Rain</h3>
+                  <input type="range" class="volume-slider" min="0" max="100" value="70" />
+                </div>
+                <button class="bg-dark/50 p-2 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="sound-card">
+                <div>
+                  <h3 class="font-medium">Ocean Waves</h3>
+                  <input type="range" class="volume-slider" min="0" max="100" value="50" />
+                </div>
+                <button class="bg-dark/50 p-2 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="sound-card">
+                <div>
+                  <h3 class="font-medium">Binaural Beats</h3>
+                  <input type="range" class="volume-slider" min="0" max="100" value="30" />
+                </div>
+                <button class="bg-dark/50 p-2 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-8 bg-dark/50 p-6 rounded-lg">
+              <h3 class="font-medium mb-4">Equalizer</h3>
+              <div class="flex justify-center items-end h-32">
+                <div class="flex flex-col items-center">
+                  <input type="range" class="eq-slider" min="0" max="100" value="60" orient="vertical" />
+                  <span class="text-xs text-gray-400 mt-2">60Hz</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <input type="range" class="eq-slider" min="0" max="100" value="70" orient="vertical" />
+                  <span class="text-xs text-gray-400 mt-2">150Hz</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <input type="range" class="eq-slider" min="0" max="100" value="80" orient="vertical" />
+                  <span class="text-xs text-gray-400 mt-2">400Hz</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <input type="range" class="eq-slider" min="0" max="100" value="65" orient="vertical" />
+                  <span class="text-xs text-gray-400 mt-2">1kHz</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <input type="range" class="eq-slider" min="0" max="100" value="50" orient="vertical" />
+                  <span class="text-xs text-gray-400 mt-2">2.5kHz</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <input type="range" class="eq-slider" min="0" max="100" value="40" orient="vertical" />
+                  <span class="text-xs text-gray-400 mt-2">6kHz</span>
+                </div>
+                <div class="flex flex-col items-center">
+                  <input type="range" class="eq-slider" min="0" max="100" value="30" orient="vertical" />
+                  <span class="text-xs text-gray-400 mt-2">15kHz</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8 flex justify-center">
+              <button class="gradient-button px-8 py-3">Start Meditation</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple interactivity for demonstration purposes
+    document.querySelectorAll('.volume-slider, .eq-slider').forEach(slider => {
+      slider.addEventListener('input', function() {
+        // In a real app, this would update the audio
+        console.log(`Slider value changed to: ${this.value}`);
+      });
+    });
+
+    document.querySelectorAll('.sound-card button').forEach(button => {
+      button.addEventListener('click', function() {
+        // Toggle mute in a real app
+        const card = this.closest('.sound-card');
+        const slider = card.querySelector('.volume-slider');
+        if (slider.disabled) {
+          slider.disabled = false;
+          this.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>`;
+        } else {
+          slider.disabled = true;
+          this.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

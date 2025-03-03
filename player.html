@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenMix Audio Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #8b5cf6;
+      --primary-dark: #7c3aed;
+      --bg-dark: #121212;
+      --bg-card: #1e1e1e;
+      --text: #ffffff;
+      --text-secondary: #a0a0a0;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    
+    .logo-icon {
+      width: 2rem;
+      height: 2rem;
+      background-color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    main {
+      margin-top: 5rem;
+      min-height: calc(100vh - 5rem);
+      padding-bottom: 6rem;
+    }
+    
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: var(--primary);
+    }
+    
+    .player-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .player-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .track-list {
+      background-color: var(--bg-card);
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+    }
+    
+    .track-list h2 {
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+    
+    .track {
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: background-color 0.2s;
+    }
+    
+    .track:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .track.active {
+      background-color: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    
+    .track-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .track-info h3 {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    
+    .track-info p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+    
+    .player {
+      background-color: var(--bg-card);
+      border-radius: 0.5rem;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .player-artwork {
+      width: 12rem;
+      height: 12rem;
+      border-radius: 50%;
+      background-color: rgba(139, 92, 246, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    
+    .player-info {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .player-info h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .player-info p {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+    
+    .player-controls {
+      width: 100%;
+      max-width: 30rem;
+    }
+    
+    .progress-container {
+      margin-bottom: 1.5rem;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 0.25rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+    }
+    
+    .progress {
+      height: 100%;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    
+    .time {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+    
+    .buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    
+    .btn:hover {
+      color: var(--primary);
+    }
+    
+    .btn-play {
+      width: 3.5rem;
+      height: 3.5rem;
+      background-color: var(--primary);
+      border-radius: 50%;
+      color: white;
+    }
+    
+    .btn-play:hover {
+      background-color: var(--primary-dark);
+      color: white;
+    }
+    
+    .volume-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .volume-slider {
+      width: 6rem;
+      height: 0.25rem;
+      -webkit-appearance: none;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+    
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 50%;
+      background-color: var(--primary);
+      cursor: pointer;
+      box-shadow: -6rem 0 0 6rem var(--primary);
+    }
+    
+    .nature { background-color: rgba(34, 197, 94, 0.2); }
+    .music { background-color: rgba(59, 130, 246, 0.2); }
+    .voice { background-color: rgba(234, 179, 8, 0.2); }
+    .beats { background-color: rgba(168, 85, 247, 0.2); }
+    
+    .nature-text { color: rgb(34, 197, 94); }
+    .music-text { color: rgb(59, 130, 246); }
+    .voice-text { color: rgb(234, 179, 8); }
+    .beats-text { color: rgb(168, 85, 247); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="4"></circle>
+        </svg>
+      </div>
+      ZenMix
+    </div>
+    <a href="/" style="color: var(--text-secondary); text-decoration: none;">Back to Dashboard</a>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1>Audio Player</h1>
+      
+      <div class="player-container">
+        <div class="track-list">
+          <h2>Tracks</h2>
+          <div id="tracks">
+            <!-- Tracks will be inserted here by JavaScript -->
+          </div>
+        </div>
+        
+        <div class="player">
+          <div class="player-artwork" id="artwork">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"></path>
+              <circle cx="6" cy="18" r="3"></circle>
+              <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+          </div>
+          
+          <div class="player-info">
+            <h2 id="track-title">Select a track</h2>
+            <p id="track-category">-</p>
+          </div>
+          
+          <div class="player-controls">
+            <div class="progress-container">
+              <div class="progress-bar" id="progress-bar">
+                <div class="progress" id="progress"></div>
+              </div>
+              <div class="time">
+                <span id="current-time">0:00</span>
+                <span id="duration">0:00</span>
+              </div>
+            </div>
+            
+            <div class="buttons">
+              <button class="btn" id="prev-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                  <line x1="5" y1="19" x2="5" y2="5"></line>
+                </svg>
+              </button>
+              
+              <button class="btn btn-play" id="play-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+              </button>
+              
+              <button class="btn" id="next-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                  <line x1="19" y1="5" x2="19" y2="19"></line>
+                </svg>
+              </button>
+            </div>
+            
+            <div class="volume-container">
+              <button class="btn" id="volume-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                </svg>
+              </button>
+              <input type="range" min="0" max="1" step="0.01" value="0.7" class="volume-slider" id="volume-slider">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Sample tracks data
+    const tracks = [
+      { 
+        id: 1, 
+        title: 'Rain Sounds', 
+        category: 'nature', 
+        url: 'https://assets.mixkit.co/sfx/preview/mixkit-light-rain-loop-2393.mp3',
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13v-1m4 1v-3m4 3V8M12 21a9 9 0 11.001-.001A9 9 0 0112 21z"></path></svg>'
+      },
+      { 
+        id: 2, 
+        title: 'Forest Birds', 
+        category: 'nature', 
+        url: 'https://assets.mixkit.co/sfx/preview/mixkit-forest-birds-ambience-1210.mp3',
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6l-4.22 5.63 1.25 1.67L14 9.33 19 16h-8.46l-4.01-5.37L1 18h22L14 6zM5 16l1.52-2.03L8.04 16H5z"></path></svg>'
+      },
+      { 
+        id: 3, 
+        title: 'Ocean Waves', 
+        category: 'nature', 
+        url: 'https://assets.mixkit.co/sfx/preview/mixkit-sea-waves-loop-1196.mp3',
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M2 12c6 0 10-5 10-5s4 5 10 5M2 12c6 0 10 5 10 5s4-5 10-5"></path></svg>'
+      },
+      { 
+        id: 4, 
+        title: 'Gentle Piano', 
+        category: 'music', 
+        url: 'https://assets.mixkit.co/sfx/preview/mixkit-sad-piano-loop-565.mp3',
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg>'
+      },
+      { 
+        id: 5, 
+        title: 'Meditation Guide', 
+        category: 'voice', 
+        url: 'https://assets.mixkit.co/sfx/preview/mixkit-ethereal-fairy-win-sound-2019.mp3',
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"></path></svg>'
+      },
+      { 
+        id: 6, 
+        title: 'Binaural Beats', 
+        category: 'beats', 
+        url: 'https://assets.mixkit.co/sfx/preview/mixkit-cinematic-mystery-suspense-hum-2852.mp3',
+        icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9.28a4.39 4.39 0 00-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z"></path></svg>'
+      }
+    ];
+
+    // DOM elements
+    const tracksList = document.getElementById('tracks');
+    const audio = new Audio();
+    const playBtn = document.getElementById('play-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const volumeBtn = document.getElementById('volume-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+    const progressBar = document.getElementById('progress-bar');
+    const progress = document.getElementById('progress');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+    const trackTitle = document.getElementById('track-title');
+    const trackCategory = document.getElementById('track-category');
+    const artwork = document.getElementById('artwork');
+
+    // State
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+
+    // Initialize
+    function init() {
+      renderTracks();
+      audio.volume = volumeSlider.value;
+      
+      // Event listeners
+      playBtn.addEventListener('click', togglePlay);
+      prevBtn.addEventListener('click', playPrevious);
+      nextBtn.addEventListener('click', playNext);
+      volumeSlider.addEventListener('input', adjustVolume);
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('ended', playNext);
+      progressBar.addEventListener('click', seek);
+    }
+
+    // Render tracks list
+    function renderTracks() {
+      tracksList.innerHTML = '';
+      
+      tracks.forEach((track, index) => {
+        const trackEl = document.createElement('div');
+        trackEl.className = `track ${index === currentTrackIndex ? 'active' : ''}`;
+        trackEl.dataset.index = index;
+        
+        trackEl.innerHTML = `
+          <div class="track-icon ${track.category}">
+            ${track.icon}
+          </div>
+          <div class="track-info">
+            <h3>${track.title}</h3>
+            <p class="${track.category}-text">${track.category.charAt(0).toUpperCase() + track.category.slice(1)}</p>
+          </div>
+        `;
+        
+        trackEl.addEventListener('click', () => {
+          currentTrackIndex = index;
+          loadTrack();
+          playTrack();
+        });
+        
+        tracksList.appendChild(trackEl);
+      });
+    }
+
+    // Load track
+    function loadTrack() {
+      const track = tracks[currentTrackIndex];
+      audio.src = track.url;
+      trackTitle.textContent = track.title;
+      trackCategory.textContent = track.category.charAt(0).toUpperCase() + track.category.slice(1);
+      
+      // Update active track in list
+      document.querySelectorAll('.track').forEach((el, index) => {
+        el.classList.toggle('active', index === currentTrackIndex);
+      });
+      
+      // Update artwork
+      artwork.className = `player-artwork ${track.category}`;
+      artwork.innerHTML = track.icon;
+      
+      // Reset progress
+      progress.style.width = '0%';
+      currentTimeEl.textContent = '0:00';
+    }
+
+    // Play track
+    function playTrack() {
+      isPlaying = true;
+      audio.play();
+      updatePlayButton();
+    }
+
+    // Pause track
+    function pauseTrack() {
+      isPlaying = false;
+      audio.pause();
+      updatePlayButton();
+    }
+
+    // Toggle play/pause
+    function togglePlay() {
+      if (audio.src) {
+        if (isPlaying) {
+          pauseTrack();
+        } else {
+          playTrack();
+        }
+      } else if (tracks.length > 0) {
+        loadTrack();
+        playTrack();
+      }
+    }
+
+    // Play previous track
+    function playPrevious() {
+      currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+      loadTrack();
+      playTrack();
+    }
+
+    // Play next track
+    function playNext() {
+      currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+      loadTrack();
+      playTrack();
+    }
+
+    // Update play button icon
+    function updatePlayButton() {
+      playBtn.innerHTML = isPlaying 
+        ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>'
+        : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+    }
+
+    // Adjust volume
+    function adjustVolume() {
+      audio.volume = volumeSlider.value;
+    }
+
+    // Update progress bar
+    function updateProgress() {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progress.style.width = `${percent}%`;
+      
+      // Update time displays
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+      durationEl.textContent = formatTime(audio.duration);
+    }
+
+    // Seek to position
+    function seek(e) {
+      const rect = progressBar.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = percent * audio.duration;
+    }
+
+    // Format time in MM:SS
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return '0:00';
+      
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Initialize the player
+    init();
+  </script>
+</body>
+</html>

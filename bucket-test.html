@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supabase Storage Bucket Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .log {
+      margin-top: 20px;
+    }
+    .error {
+      color: red;
+    }
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Supabase Storage Bucket Test</h1>
+  
+  <div>
+    <button id="listBuckets">List Buckets</button>
+    <button id="createBucket">Create audio-files Bucket</button>
+    <button id="listFiles">List Files in Bucket</button>
+    <button id="uploadFile">Upload Test File</button>
+    <button id="clearLog">Clear Log</button>
+  </div>
+  
+  <div class="log">
+    <h3>Log:</h3>
+    <div id="logOutput"></div>
+  </div>
+  
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    
+    // Get the Supabase URL and key from the environment
+    // For this test page, we'll hardcode them - replace with your actual values
+    const supabaseUrl = 'https://avrtzsptvuknahqkzqie.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cnR6c3B0dnVrbmFocWt6cWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA4NDg0NzYsImV4cCI6MjA1NjQyNDQ3Nn0.Uj-Jx9xGwfx8hO8K1pTUjt0jEPgqc9vQXvwvXSXP4Qw';
+    
+    // Initialize the Supabase client
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    
+    // Log function
+    function log(message, isError = false, isSuccess = false) {
+      const logOutput = document.getElementById('logOutput');
+      const logEntry = document.createElement('pre');
+      logEntry.textContent = typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
+      
+      if (isError) {
+        logEntry.classList.add('error');
+      } else if (isSuccess) {
+        logEntry.classList.add('success');
+      }
+      
+      logOutput.prepend(logEntry);
+    }
+    
+    // List buckets
+    document.getElementById('listBuckets').addEventListener('click', async () => {
+      try {
+        log('Listing buckets...');
+        
+        const { data, error } = await supabase.storage.listBuckets();
+        
+        if (error) {
+          log('Error listing buckets: ' + JSON.stringify(error), true);
+          return;
+        }
+        
+        log('Available buckets: ' + data.map(b => b.name).join(', '), false, true);
+        log(data);
+      } catch (err) {
+        log('Unexpected error: ' + err.message, true);
+      }
+    });
+    
+    // Create bucket
+    document.getElementById('createBucket').addEventListener('click', async () => {
+      try {
+        log('Creating audio-files bucket...');
+        
+        const { data, error } = await supabase.storage.createBucket('audio-files', {
+          public: true
+        });
+        
+        if (error) {
+          log('Error creating bucket: ' + JSON.stringify(error), true);
+          return;
+        }
+        
+        log('Bucket created successfully!', false, true);
+        log(data);
+      } catch (err) {
+        log('Unexpected error: ' + err.message, true);
+      }
+    });
+    
+    // List files
+    document.getElementById('listFiles').addEventListener('click', async () => {
+      try {
+        log('Listing files in audio-files bucket...');
+        
+        const { data, error } = await supabase.storage
+          .from('audio-files')
+          .list();
+        
+        if (error) {
+          log('Error listing files: ' + JSON.stringify(error), true);
+          return;
+        }
+        
+        log('Files in bucket:', false, true);
+        log(data);
+      } catch (err) {
+        log('Unexpected error: ' + err.message, true);
+      }
+    });
+    
+    // Upload file
+    document.getElementById('uploadFile').addEventListener('click', async () => {
+      try {
+        log('Uploading test file...');
+        
+        const testContent = 'This is a test file created at ' + new Date().toISOString();
+        const testFile = new Blob([testContent], { type: 'text/plain' });
+        const testPath = `test-${Date.now()}.txt`;
+        
+        const { data, error } = await supabase.storage
+          .from('audio-files')
+          .upload(testPath, testFile);
+        
+        if (error) {
+          log('Error uploading file: ' + JSON.stringify(error), true);
+          return;
+        }
+        
+        log('File uploaded successfully!', false, true);
+        log(data);
+        
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('audio-files')
+          .getPublicUrl(testPath);
+        
+        log('Public URL: ' + publicUrl, false, true);
+      } catch (err) {
+        log('Unexpected error: ' + err.message, true);
+      }
+    });
+    
+    // Clear log
+    document.getElementById('clearLog').addEventListener('click', () => {
+      document.getElementById('logOutput').innerHTML = '';
+    });
+    
+    // Initial log
+    log('Supabase Storage Bucket Test Page Loaded');
+    log('Using Supabase URL: ' + supabaseUrl);
+    log('Using Supabase key: ' + (supabaseAnonKey ? 'Key is present (not showing for security)' : 'Key is missing'));
+  </script>
+</body>
+</html>
