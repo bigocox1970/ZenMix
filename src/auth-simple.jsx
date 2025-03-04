@@ -4,9 +4,8 @@ import { createClient } from '@supabase/supabase-js'
 import './index.css'
 
 // Initialize Supabase client with environment variables or fallback to hardcoded values
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://avrtzsptvuknahqkzqie.supabase.co'
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cnR6c3B0dnVrbmFocWt6cWllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA4NDg0NzYsImV4cCI6MjA1NjQyNDQ3Nn0.K6XCgkIqbPn1txPaPdPU6U4OkQ7j0u63RXTNJYNLD-0'
-
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 // Log the Supabase configuration for debugging
 console.log('Auth: Initializing Supabase with URL:', supabaseUrl)
 console.log('Auth: Environment variables available:', !!import.meta.env.VITE_SUPABASE_URL)
